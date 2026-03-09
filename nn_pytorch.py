@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 """from IPython import display
-display.set_matplotlib_formats("svg")"""
+display.set_matplotlib_formats("svg")""" 
 
 iris = pd.read_csv("iris.csv")
 print(iris.head())
@@ -41,18 +41,7 @@ print("\nTest data batches:")
 for X, y in test_loader:
     print(X.shape, y.shape)
 
-class Net(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.input = nn.Linear(in_features=4, out_features=16)
-        self.hidden_1 = nn.Linear(in_features=16, out_features=16)
-        self.output = nn.Linear(in_features=16, out_features=3)
-        
-    def forward(self, x):
-        x = F.relu(self.input(x))
-        x = F.relu(self.hidden_1(x))
-        return self.output(x)
-    
+
     
 def train_model(train_loader, test_loader, model, lr=0.01, num_epochs=200):
     train_accuracies, test_accuracies = [], []
@@ -83,7 +72,49 @@ def train_model(train_loader, test_loader, model, lr=0.01, num_epochs=200):
     return train_accuracies[-1], test_accuracies[-1]
 
 
-a,b=train_model(train_loader, test_loader, Net())
+class Net2(nn.Module):
+    def __init__(self, n_units, n_layers):
+        super().__init__()
+        self.n_layers = n_layers
+        
+        self.layers = nn.ModuleDict()
+        self.layers["input"] = nn.Linear(in_features=4, out_features=n_units)
+        
+        for i in range(self.n_layers):
+            self.layers[f"hidden_{i}"] = nn.Linear(in_features=n_units, out_features=n_units)
+            
+        self.layers["output"] = nn.Linear(in_features=n_units, out_features=3)
+        
+    def forward(self, x):
+        x = self.layers["input"](x)
+        
+        for i in range(self.n_layers):
+            x = F.relu(self.layers[f"hidden_{i}"](x))
+            
+        return self.layers["output"](x)
+    
+n_layers = np.arange(1, 5)
+n_units = np.arange(8, 65, 8)
+train_accuracies, test_accuracies = [], []
 
-print(f"Final training accuracy: {a:.2f}%")
-print(f"Final testing accuracy: {b:.2f}%")
+for i in range(len(n_units)):
+    for j in range(len(n_layers)):
+        model = Net2(n_units=n_units[i], n_layers=n_layers[j])
+        train_acc, test_acc = train_model(train_loader, test_loader, model)
+        train_accuracies.append({
+            "n_layers": n_layers[j],
+            "n_units": n_units[i],
+            "accuracy": train_acc
+        })
+        test_accuracies.append({
+            "n_layers": n_layers[j],
+            "n_units": n_units[i],
+            "accuracy": test_acc
+        })
+        
+        
+train_accuracies = pd.DataFrame(train_accuracies).sort_values(by=["n_layers", "n_units"]).reset_index(drop=True)
+test_accuracies = pd.DataFrame(test_accuracies).sort_values(by=["n_layers", "n_units"]).reset_index(drop=True)
+print(test_accuracies.head())    
+
+print(test_accuracies[test_accuracies["accuracy"] == test_accuracies["accuracy"].max()])

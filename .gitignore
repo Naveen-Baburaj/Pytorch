@@ -5,7 +5,4 @@ vc140.pdb
 C++/iris_pytorch.exe
 C++/iris_pytorch.cpp
 .gitignore
-.vscode/c_cpp_properties.json
-.vscode/launch.json
-.vscode/tasks.json
-
+.vscode/

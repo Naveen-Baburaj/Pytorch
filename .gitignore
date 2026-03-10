@@ -2,3 +2,10 @@ iris_pytorch.ilk
 iris_pytorch.obj
 iris_pytorch.pdb
 vc140.pdb
+C++/iris_pytorch.exe
+C++/iris_pytorch.cpp
+.gitignore
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/tasks.json
+

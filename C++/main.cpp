@@ -9,8 +9,6 @@
 #include <iomanip>
 using namespace std;
 using namespace torch;
-//namespace nn = torch::nn;
-//#include <stdexcept>
 
 struct ResultRow 
 {
@@ -26,6 +24,10 @@ struct IrisData
 IrisData load_iris_csv(string filename)  
 {
     ifstream file(filename);
+    if (!file.is_open()) {
+    cout << "Could not open file: " << filename << endl;
+    exit(1);
+}
     string line;
     getline(file, line); //skip header
 
@@ -44,10 +46,6 @@ IrisData load_iris_csv(string filename)
         {
             row.push_back(cell);
         }
-
-     /*   if (row.size() != 5) {
-            throw std::runtime_error("Invalid row in CSV: " + line);
-        } */
 
         features.push_back(stof(row[0]));
         features.push_back(stof(row[1]));
@@ -291,12 +289,6 @@ int main()
                 test_accuracies.push_back({layers, units, test_acc});
             }
         }
-
-      /*  sort(test_accuracies.begin(), test_accuracies.end(),
-            [](const ResultRow& a, const ResultRow& b) {
-                if (a.n_layers != b.n_layers) return a.n_layers < b.n_layers;
-                return a.n_units < b.n_units;
-            }); */
 
         cout<<"\n First 5 rows of test_accuracies:"<<endl;
         cout<<fixed<<setprecision(2);

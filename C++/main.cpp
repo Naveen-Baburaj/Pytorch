@@ -55,7 +55,7 @@ IrisData load_iris_csv(string filename)
         features.push_back(stof(row[3]));
 
         string label = row[4];
-       // label.erase(remove(label.begin(), label.end(), '"'), label.end());
+        label.erase(remove(label.begin(), label.end(), '"'), label.end());
 
         if (label == "Setosa") 
         {
@@ -72,10 +72,10 @@ IrisData load_iris_csv(string filename)
         
     }
 
-    const int n = static_cast<int>(labels.size()); //size will give unsigned int, we need signed int, so converts
+    const int64_t n = labels.size();
 
-    Tensor X = from_blob(features.data(), {n, 4}, kFloat32).clone(); //blob=binary large object
-    Tensor y = from_blob(labels.data(), {n}, kInt64).clone();
+    Tensor X = torch::from_blob(features.data(), {n, 4}, TensorOptions().dtype(torch::kFloat32)).clone(); //blob=binary large object
+    Tensor y = torch::from_blob(labels.data(), {n}, TensorOptions().dtype(torch::kInt64)).clone();
 
     return {X, y};
 }
@@ -93,10 +93,10 @@ void train_test_split_tensors(
 {
     manual_seed(seed);   
 
-    int n = X.size(0);
-    int n_train = static_cast<int>(n * train_size);
+    int64_t n = X.size(0);
+    int64_t n_train = static_cast<int64_t>(n * train_size); 
 
-    Tensor indices = randperm(n); //randperm returns tensor 
+    Tensor indices = torch::randperm(n); //randperm returns tensor 
     Tensor train_idx = indices.slice(0, 0, n_train);
     Tensor test_idx  = indices.slice(0, n_train);
 
@@ -143,18 +143,18 @@ vector<pair<Tensor,Tensor>> make_train_loader
 (
     const Tensor& X_train,
     const Tensor& y_train,
-    int batch_size,
+    int64_t batch_size,
     int seed
 ) 
 {
     manual_seed(seed);
-    int n = X_train.size(0);
-    Tensor indices= randperm(n);
+    int64_t n = X_train.size(0); 
+    Tensor indices= torch::randperm(n);
     vector<pair<Tensor,Tensor>> loader;
 
-    for (int start = 0; start < n; start += batch_size)
+    for(int64_t start = 0; start < n; start += batch_size)
     {
-        int end = min(start + batch_size, n);
+        int64_t end = std::min(start + batch_size, n); //showing error due to torch::min
         Tensor batch_idx = indices.slice(0, start, end);
         Tensor X_batch = X_train.index_select(0, batch_idx);
         Tensor y_batch = y_train.index_select(0, batch_idx);

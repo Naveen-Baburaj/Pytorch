@@ -18,21 +18,6 @@ https://www.appsilon.com/post/pytorch-neural-network-tutorial
 
 In this project, the Python code is used as the **reference implementation**, which is then **ported to C++ using LibTorch**.
 
-## Dataset
-
-The project uses the classic **Iris dataset**, which contains:
-
-- 150 samples  
-- 4 numerical features:
-  - sepal length
-  - sepal width
-  - petal length
-  - petal width
-- 3 classes:
-  - Setosa
-  - Versicolor
-  - Virginica
-
 ---
 
 ## Author

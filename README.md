@@ -1,4 +1,4 @@
-# Porting a PyTorch Neural Network from Python to C using LibTorch – Iris Classification
+# Porting a PyTorch Neural Network from Python to C++ using LibTorch – Iris Classification
 
 ## Overview
 This project demonstrates how a neural network implemented in **Python using PyTorch** can be **ported to C++ using LibTorch** while preserving the same machine learning architecture.
